@@ -51,19 +51,20 @@ public class LoginSteps {
     //Login for Test User Details feature Background steps Login and Navigate under "My Account"
     @Given("The user is successfully logged in to the web page")
     public void the_user_is_successfully_logged_in_to_the_web_page(){
-
-        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("fc-button fc-cta-consent fc-primary-button")));
-        WebDriverActions webDriverActions=new WebDriverActions(webDriver,10);
+        WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
         webDriver.get(webUrl);
         webDriverActions.acceptCookies(webUrl);
-        String emailField="//*[@id=\"reg_email\"]";
+
+     //   WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+       // wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".fc-button fc-cta-consent fc-primary-button")));
+
+        String emailField="#reg_email";
         webDriverActions.enterTextInField(webUrl,emailField,webDriverActions.emailGenerator());
-        String passwordField="//*[@id=\"reg_password\"]";
+        String passwordField="#reg_password";
         webDriverActions.enterTextInField(webUrl,passwordField,webDriverActions.passwordGenerator());
-        String registerButton="";
+        String registerButton="input[value='Register']";
         webDriverActions.clickButton(webUrl,registerButton);
-        String loadImage="";
+        String loadImage=".woocommerce-info";
         String findElement=webDriverActions.findElementDoExist(webUrl,loadImage);
         assert findElement.contains("Shop Selenium Books");
     }
@@ -94,6 +95,7 @@ public class LoginSteps {
     public void the_user_clicks_on_the_My_Account_link(){
         WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
         webDriverActions.clickButton(webUrl,myAccount);
+        element="";
         String findElement=webDriverActions.findElementDoExist(webUrl,element);
         assert findElement.contains("");
 
@@ -102,11 +104,12 @@ public class LoginSteps {
     public void the_user_navigates_to_Account_Details(){
         WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
         webDriverActions.clickButton(webUrl,accountDetails);
+        element="";
         String findElement=webDriverActions.findElementDoExist(webUrl,element);
         assert findElement.contains("");
     }
 
-    @Then("The email address displayed under the string textbox matches the expected email")
+    @Then("The email address displayed under the {string} textbox matches the expected email")
     public void the_email_address_displayed_under_the_Email_Address_textbox_matches_the_expected_email(){
         element="";
         WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);

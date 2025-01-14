@@ -26,12 +26,13 @@ public class WebDriverActions {
         timeouts = webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(wait));
         webDriver.get(webUrl);
         try {
-            WebElement acceptCookiesButton = webDriver.findElement(By.className("fc-button fc-cta-consent fc-primary-button")); // Example with 'id'
+            WebElement acceptCookiesButton = webDriver.findElement(By.cssSelector(".fc-button.fc-cta-consent.fc-primary-button"));
             if (acceptCookiesButton.isDisplayed()) {
                 acceptCookiesButton.click();
+                System.out.println("Cookies accepted.");
             }
         } catch (Exception e) {
-            System.out.println("No cookies prompt found.");
+            System.out.println("No cookies prompt found or an error occurred: " + e.getMessage());
         }
     }
 
@@ -40,7 +41,7 @@ public class WebDriverActions {
         WebDriver.Timeouts timeouts;
         timeouts = webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(wait));
         webDriver.get(webUrl);
-        WebElement enterButton=webDriver.findElement(By.id(htmlButton));
+        WebElement enterButton=webDriver.findElement(By.cssSelector(htmlButton));
         enterButton.click();
 
     }
@@ -50,10 +51,19 @@ public class WebDriverActions {
         WebDriver.Timeouts timeouts;
         timeouts = webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(wait));
         webDriver.get(webUrl);
-        WebElement inputField = webDriver.findElement(By.id(idField));
-        inputField.clear();
-        inputField.sendKeys(textToWrite);
-        return inputField.getDomAttribute("value");
+        if (!idField.startsWith("#") && !idField.startsWith(".")) {
+            idField = "#" + idField;
+        }
+        try {
+            WebElement inputField = webDriver.findElement(By.id(idField));
+            inputField.clear();
+            inputField.sendKeys(textToWrite);
+            return inputField.getDomAttribute("value");
+        }catch (Exception e) {
+            System.err.println("Error locating or interacting with the element: " + e.getMessage());
+            throw e;
+        }
+
     }
 
     //url load + find element + get text
