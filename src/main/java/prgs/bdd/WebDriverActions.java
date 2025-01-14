@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.Random;
 
+
 public class WebDriverActions {
 
     private final WebDriver webDriver;
@@ -22,10 +23,8 @@ public class WebDriverActions {
     }
 
     public void acceptCookies(String webUrl) {
-        WebDriver.Timeouts timeouts;
-        timeouts = webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(wait));
-        webDriver.get(webUrl);
         try {
+           // webDriver.get(webUrl);
             WebElement acceptCookiesButton = webDriver.findElement(By.cssSelector(".fc-button.fc-cta-consent.fc-primary-button"));
             if (acceptCookiesButton.isDisplayed()) {
                 acceptCookiesButton.click();
@@ -33,67 +32,69 @@ public class WebDriverActions {
             }
         } catch (Exception e) {
             System.out.println("No cookies prompt found or an error occurred: " + e.getMessage());
+            throw e;
         }
     }
 
     //url load + find element + click
     public void clickButton(String webUrl, String htmlButton){
-        WebDriver.Timeouts timeouts;
-        timeouts = webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(wait));
-        webDriver.get(webUrl);
-        WebElement enterButton=webDriver.findElement(By.cssSelector(htmlButton));
-        enterButton.click();
-
-    }
-
-    //url load + find element + type in
-    public String enterTextInField(String webUrl,String idField, String textToWrite){
-        WebDriver.Timeouts timeouts;
-        timeouts = webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(wait));
-        webDriver.get(webUrl);
-        if (!idField.startsWith("#") && !idField.startsWith(".")) {
-            idField = "#" + idField;
+        try{
+            WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+            WebElement enterButton = wait.until(ExpectedConditions.elementToBeClickable(By.name(htmlButton)));
+            enterButton.click();
         }
-        try {
-            WebElement inputField = webDriver.findElement(By.id(idField));
-            inputField.clear();
-            inputField.sendKeys(textToWrite);
-            return inputField.getDomAttribute("value");
-        }catch (Exception e) {
-            System.err.println("Error locating or interacting with the element: " + e.getMessage());
+        catch (Exception e) {
+            System.err.println("Error locating or clicking the button: " + e.getMessage());
             throw e;
         }
 
     }
 
+    public String enterTextInField(String webUrl, String idField, String textToWrite) {
+        try {
+            if (!idField.startsWith("#") && !idField.startsWith(".")) {
+                idField = "#" + idField;
+            }
+            WebElement inputField = webDriver.findElement(By.cssSelector(idField));
+            if (!inputField.getAttribute("value").isEmpty()) {
+                inputField.clear();
+            }
+            inputField.sendKeys(textToWrite);
+            return inputField.getAttribute("value");
+        } catch (Exception e) {
+            System.err.println("Error locating or interacting with the element: " + e.getMessage());
+            throw e;
+        }
+    }
+
     //url load + find element + get text
     public String findElementDoExist(String webUrl,String elementText ){
-        WebDriver.Timeouts timeouts;
-        timeouts = webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(wait));
-        webDriver.get(webUrl);
-        WebElement messageText=webDriver.findElement(By.xpath(elementText));
+       // webDriver.get(webUrl);
+        WebElement messageText=webDriver.findElement(By.className(elementText));
         return messageText.getText();
     }
 
     public String emailGenerator(){
-        WebDriver.Timeouts timeouts;
-        timeouts = webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(wait));
         Random rnd = new Random();
-        String newEmail= "test.test"+rnd+"@gmail.com";
-        while (newEmail.length() <= 20) {
+        try {
+            String newEmail = "test" + rnd.nextInt(100000) + "@gmail.com";
+            //if (newEmail.length() <= 20) {return newEmail;}
             return newEmail;
+        } catch (Exception e){
+            System.err.println("Error generating the email: " + e.getMessage());
+            throw e;
         }
-        return newEmail.toString();
     }
     public String passwordGenerator(){
-        WebDriver.Timeouts timeouts;
-        timeouts = webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(wait));
         Random rnd = new Random();
-        String newPassword= "ABC"+rnd+"&%$";
-        while (newPassword.length() <= 20) {
+        try {
+            String newPassword= "ABC"+rnd.nextInt(100000)+"&%$";
+           // if (newPassword.length() <= 20) {return newPassword;}
             return newPassword;
+        } catch (Exception e) {
+            System.err.println("Error generating the email: " + e.getMessage());
+            throw e;
         }
-        return newPassword.toString();
     }
 
 }
