@@ -53,6 +53,21 @@ public class WebDriverActions {
 
     }
 
+    //Click using xpath of Button
+    public void click(String webUrl, String html){
+        try{
+            WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
+            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(html)));
+            Thread.sleep(1000);
+            element.click();
+        }
+        catch (Exception e) {
+            System.err.println("Error locating or clicking the button: " + e.getMessage());
+
+        }
+
+    }
+
     //Click hyperlink using linkText
     public void clickHyperlink(String webUrl, String hyperlink){
         try{
@@ -112,6 +127,28 @@ public class WebDriverActions {
             return "ABC"+rnd.nextInt(100000)+"&%$";
         } catch (Exception e) {
             System.err.println("Error generating the email: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public String firstnameGenerator(){
+        Random rnd = new Random();
+        try
+        {
+            return "First"+rnd.nextInt(100000)+"Name";
+        } catch (Exception e) {
+            System.err.println("Error generating First Name: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public String lastnameGenerator(){
+        Random rnd = new Random();
+        try
+        {
+            return "Last"+rnd.nextInt(100000)+"Name";
+        } catch (Exception e) {
+            System.err.println("Error generating Last Name: " + e.getMessage());
             throw e;
         }
     }
