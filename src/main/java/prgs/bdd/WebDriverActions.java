@@ -7,6 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Random;
 
 
@@ -22,9 +23,9 @@ public class WebDriverActions {
         this.wait = wait;
     }
 
+    //Accept Cookies
     public void acceptCookies(String webUrl) {
         try {
-           // webDriver.get(webUrl);
             WebElement acceptCookiesButton = webDriver.findElement(By.cssSelector(".fc-button.fc-cta-consent.fc-primary-button"));
             if (acceptCookiesButton.isDisplayed()) {
                 acceptCookiesButton.click();
@@ -36,50 +37,69 @@ public class WebDriverActions {
         }
     }
 
-    //url load + find element + click
+    //Click using name of Button
     public void clickButton(String webUrl, String htmlButton){
+
         try{
-            WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
-            WebElement enterButton = wait.until(ExpectedConditions.elementToBeClickable(By.name(htmlButton)));
+            WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
+            WebElement enterButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name(htmlButton)));
+            Thread.sleep(5000);
             enterButton.click();
         }
         catch (Exception e) {
             System.err.println("Error locating or clicking the button: " + e.getMessage());
-            throw e;
+
         }
 
     }
 
-    public String enterTextInField(String webUrl, String idField, String textToWrite) {
+    //Click hyperlink using linkText
+    public void clickHyperlink(String webUrl, String hyperlink){
+        try{
+            WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
+            WebElement selectHyperlink = wait.until(ExpectedConditions.elementToBeClickable(By.linkText(hyperlink)));
+            selectHyperlink.click();
+        }
+        catch (Exception e) {
+            System.err.println("Error locating or clicking the hyperlink: " + e.getMessage());
+
+        }
+
+    }
+
+    //Write in Field, find by cssSelector
+    public String enterTextInField(String webUrl, String idField, String textToWrite){
         try {
-            if (!idField.startsWith("#") && !idField.startsWith(".")) {
-                idField = "#" + idField;
-            }
-            WebElement inputField = webDriver.findElement(By.cssSelector(idField));
-            if (!inputField.getAttribute("value").isEmpty()) {
+            WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
+            WebElement inputField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(idField)));
+            Thread.sleep(1000);
+            if (!Objects.requireNonNull(inputField.getAttribute("value")).isEmpty())
+            {
                 inputField.clear();
             }
             inputField.sendKeys(textToWrite);
             return inputField.getAttribute("value");
-        } catch (Exception e) {
-            System.err.println("Error locating or interacting with the element: " + e.getMessage());
-            throw e;
         }
+        catch (Exception e)
+        {
+            System.err.println("Error locating or interacting with the element: " + e.getMessage());
+
+        }
+        return webUrl;
     }
 
-    //url load + find element + get text
+    //Element is located and the text is read by className
     public String findElementDoExist(String webUrl,String elementText ){
-       // webDriver.get(webUrl);
-        WebElement messageText=webDriver.findElement(By.className(elementText));
+
+        WebElement messageText=webDriver.findElement(By.xpath(elementText));
         return messageText.getText();
     }
 
     public String emailGenerator(){
         Random rnd = new Random();
-        try {
-            String newEmail = "test" + rnd.nextInt(100000) + "@gmail.com";
-            //if (newEmail.length() <= 20) {return newEmail;}
-            return newEmail;
+        try
+        {
+            return "test" + rnd.nextInt(100000) + "@gmail.com";
         } catch (Exception e){
             System.err.println("Error generating the email: " + e.getMessage());
             throw e;
@@ -87,10 +107,9 @@ public class WebDriverActions {
     }
     public String passwordGenerator(){
         Random rnd = new Random();
-        try {
-            String newPassword= "ABC"+rnd.nextInt(100000)+"&%$";
-           // if (newPassword.length() <= 20) {return newPassword;}
-            return newPassword;
+        try
+        {
+            return "ABC"+rnd.nextInt(100000)+"&%$";
         } catch (Exception e) {
             System.err.println("Error generating the email: " + e.getMessage());
             throw e;

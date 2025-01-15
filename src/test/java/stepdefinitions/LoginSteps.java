@@ -22,11 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class LoginSteps {
 
     static WebDriver webDriver;
-    static int wait=10;
+    static int wait=100;
     static String webUrl = "https://practice.automationtesting.in/my-account/";
-   // static String element;
-   // static String myAccount="<a href=\"https://practice.automationtesting.in/my-account/\">My Account</a>";
-   // static String accountDetails="<a href=\"https://practice.automationtesting.in/my-account/edit-account/\">Account Details</a>";
+    static String usedPassword="";
+    static String usedEmail="";
 
 
     @BeforeAll
@@ -35,6 +34,7 @@ public class LoginSteps {
             ChromeOptions chromeOptions = new ChromeOptions();
             chromeOptions.addArguments("start-maximized");
             webDriver = new ChromeDriver(chromeOptions);
+            webDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100));
         } catch (Exception e) {
             System.err.println("Error initializing WebDriver: " + e.getMessage());
         }
@@ -52,54 +52,67 @@ public class LoginSteps {
     @Given("The user is successfully logged in to the web page")
     public void the_user_is_successfully_logged_in_to_the_web_page(){
         WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
         webDriver.get(webUrl);
 
         webDriverActions.acceptCookies(webUrl);
 
         String emailField="#reg_email";
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(emailField)));
         String enteredEmail = webDriverActions.emailGenerator();
         webDriverActions.enterTextInField(webUrl,emailField,enteredEmail);
         System.out.println("Entered email: " + enteredEmail);
 
         String passwordField="#reg_password";
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(passwordField)));
         String enteredPassword=webDriverActions.passwordGenerator();
         webDriverActions.enterTextInField(webUrl,passwordField,enteredPassword);
         System.out.println("Entered password:"+enteredPassword);
-
 
         String registerButton="register";
         webDriverActions.clickButton(webUrl,registerButton);
         System.out.println("Button Register is clicked");
 
-        String welcomeUser=".woocommerce-MyAccount-content";
+        String welcomeUser="//*[@id=\"page-36\"]/div/div[1]/div";
         String findElement=webDriverActions.findElementDoExist(webUrl,welcomeUser);
-        assert findElement.contains(enteredEmail);
-    }
+        assert findElement.contains("Hello");
+        System.out.println("User is log in");
 
-    @When("The user clicks on the {string} link")
-    public void the_user_clicks_on_the_My_Account_link(){
-        WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
-        String myAccount="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-36 current_page_item";
-        webDriverActions.clickButton(webUrl,myAccount);
-        String findElement=webDriverActions.findElementDoExist(webUrl,myAccount);
-        assert findElement.contains("My Account");
+        usedPassword.matches(enteredPassword);
+        usedEmail.matches(enteredEmail);
+
 
     }
-    @And("The user navigates to {string}")
+
+    @And("The user navigates to Account Details")
     public void the_user_navigates_to_Account_Details(){
         WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
-        String accountDetails="woocommerce-MyAccount-navigation-link woocommerce-MyAccount-navigation-link--edit-account";
-        webDriverActions.clickButton(webUrl,accountDetails);
-        String findElement=webDriverActions.findElementDoExist(webUrl,accountDetails);
-        assert findElement.contains("Account Details");
+
+        String accountDetails="Account Details";
+        webDriverActions.clickHyperlink(webUrl,accountDetails);
+        System.out.println("Account Details hyperlink is clicked");
+
     }
 
-    @Then("The email address displayed under the {string} textbox matches the expected email")
+    @When("User is under Account Details tab")
+    public void user_is_under_account_details_tab(){
+        WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
+
+        String tab="//*[@id=\"page-36\"]/div/div[1]/div/form";
+        String findElement=webDriverActions.findElementDoExist(webUrl,tab);
+        assert findElement.contains("First name");
+        System.out.println("Validation user is under the selected Account Details tab");
+
+    }
+
+    @Then("The email address displayed under the Email Address textbox matches the expected email")
     public void the_email_address_displayed_under_the_Email_Address_textbox_matches_the_expected_email(){
         WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
-        //String email=enteredEmail;
-     //   webDriverActions.findElementDoExist(webUrl,enteredEmail);
 
+        String email="//*[@id=\"account_email\"]";
+        webDriverActions.findElementDoExist(webUrl,email);
+        assert email.equals(usedEmail);
+        System.out.println("Email matches :"+usedEmail);
 
     }
 

@@ -1,16 +1,15 @@
 Feature: Test User Details
 
-  Scenario: The user would like to navigate to the "Account Details" and verify the correct email was used.
+  Background:
     Given The user is successfully logged in to the web page
-    When The user clicks on the "My Account" link
-    And The user navigates to "Account Details"
-    Then The email address displayed under the "Email Address" textbox matches the expected email
+    And The user navigates to Account Details
+
+  Scenario: The user would like to navigate to the "Account Details" and verify the correct email was used.
+    When User is under Account Details tab
+    Then The email address displayed under the Email Address textbox matches the expected email
 
 
   Scenario: The user would like to enter first and last names, make sure they are correct in the input boxes, and save.
-    Given The user is successfully logged in to the web page
-    When The user clicks on the "My Account" link
-    And The user navigates to "Account Details"
     And The user enters valid first name in the 'First name' textbox
     And The user enters valid last name in the 'Last name' textbox
     Then The first name displayed under the "First name" textbox matches the entered name
@@ -20,9 +19,6 @@ Feature: Test User Details
 
 
   Scenario: User logs out successfully
-    Given The user is successfully logged in to the web page
-    When The user clicks on the "My Account" link
-    And The user navigates to "Account Details"
     And Clicks on the Logout button
     Then The user is redirected to the login page
     And A logout confirmation message is displayed
