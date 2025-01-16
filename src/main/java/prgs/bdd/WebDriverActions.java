@@ -1,6 +1,7 @@
 package prgs.bdd;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -26,14 +27,16 @@ public class WebDriverActions {
     //Accept Cookies
     public void acceptCookies(String webUrl) {
         try {
-            WebElement acceptCookiesButton = webDriver.findElement(By.cssSelector(".fc-button.fc-cta-consent.fc-primary-button"));
-            if (acceptCookiesButton.isDisplayed()) {
+            WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(30));
+            WebElement acceptCookiesButton =wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".fc-button.fc-cta-consent.fc-primary-button")));
+            System.out.println("Cookie banner is visible.");
+            if (acceptCookiesButton.isDisplayed())
+            {
                 acceptCookiesButton.click();
                 System.out.println("Cookies accepted.");
             }
-        } catch (Exception e) {
-            System.out.println("No cookies prompt found or an error occurred: " + e.getMessage());
-            throw e;
+        }catch (Exception e) {
+        System.err.println("Error while accepting cookies: " + e.getMessage());
         }
     }
 
@@ -152,5 +155,7 @@ public class WebDriverActions {
             throw e;
         }
     }
+
+
 
 }

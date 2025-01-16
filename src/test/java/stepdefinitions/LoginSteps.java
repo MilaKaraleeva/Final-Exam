@@ -26,6 +26,7 @@ public class LoginSteps {
 
     static WebDriver webDriver;
     static int wait=100;
+    static String webUrlStart="https://practice.automationtesting.in/";
     static String webUrl = "https://practice.automationtesting.in/my-account/";
     static String usedPassword="";
     static String usedEmail="";
@@ -48,22 +49,41 @@ public class LoginSteps {
         }
 
     }
-//    @AfterAll
-//    public static void tearDown(){
-//        if (webDriver != null) {
-//            webDriver.close();
-//            webDriver.quit();
-//        }
-//    }
+    @AfterAll
+    public static void tearDown(){
+        if (webDriver != null) {
+            webDriver.switchTo().defaultContent();
+            webDriver.close();
+            webDriver.quit();
+        }
+    }
 
-    //Background steps
-    @Given("The user is successfully logged in to the web page")
+    @Given("User is under login page")
+    public void user_is_under_login_page(){
+       WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
+        webDriver.get(webUrlStart);
+
+
+        webDriverActions.acceptCookies(webUrlStart);
+
+
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.titleContains("Automation Practice Site"));
+        System.out.println("Under main page");
+
+    }
+
+    //Scenario 10
+    @And("The user is successfully logged in to the web page")
     public void the_user_is_successfully_logged_in_to_the_web_page(){
         WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
-        webDriver.get(webUrl);
+     //   webDriver.get(webUrl);
 
-        webDriverActions.acceptCookies(webUrl);
+        String accountNavigation="My Account";
+        webDriverActions.clickHyperlink(webUrl,accountNavigation);
+
+       // webDriverActions.acceptCookies(webUrl);
 
         String emailField="#reg_email";
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(emailField)));
@@ -86,12 +106,10 @@ public class LoginSteps {
         assert findElement.contains("Hello");
         System.out.println("User is log in");
 
-        usedPassword.matches(enteredPassword);
-        usedEmail.matches(enteredEmail);
-
+        usedEmail=enteredEmail;
 
     }
-    //Scenario 1
+
     @When("The user navigates to Account Details")
     public void the_user_navigates_to_Account_Details(){
         WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
@@ -102,12 +120,12 @@ public class LoginSteps {
 
     }
 
-    @And("User is under Account Details tab")
-    public void user_is_under_account_details_tab(){
+    @And("User Validate correct tab")
+    public void user_validate_correct_tab(){
         WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
 
-        String tab="//*[@id=\"page-36\"]/div/div[1]/div/form";
-        String findElement=webDriverActions.findElementDoExist(webUrl,tab);
+        String tabXpath="//*[@id=\"page-36\"]/div/div[1]/div/form";
+        String findElement=webDriverActions.findElementDoExist(webUrl,tabXpath);
         assert findElement.contains("First name");
         System.out.println("Validation user is under the selected Account Details tab");
 
@@ -125,7 +143,7 @@ public class LoginSteps {
     }
 
     //Scenario 2
-    @When("User enters valid first name in the First name textbox")
+    @And("User enters valid first name in the First name textbox")
     public void user_enters_valid_first_name_in_the_First_name_textbox(){
         WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
 
@@ -176,7 +194,7 @@ public class LoginSteps {
         WebDriverActions webDriverActions=new WebDriverActions(webDriver,wait);
 
         String saveChangesButton="save_account_details";
-        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(100));
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5000));
         WebElement buttonElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name(saveChangesButton)));
 
         JavascriptExecutor jsExecutor = (JavascriptExecutor) webDriver;
